@@ -1,3 +1,4 @@
 import { Game } from "./modules/game.js";
 
-Game.start();
+var game = new Game();
+game.start();
