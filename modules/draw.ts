@@ -1,29 +1,10 @@
 import { GameSettings } from "./gameSettings.js";
-import { Globals } from "./globals.js";
+import { Board } from "./board.js";
 import { Log } from "./log.js";
 
 const LINE_THICKNESS_PX = 2;
 const CELL_SIZE_PX = 60 + LINE_THICKNESS_PX;
-const ATOM_RADIUS_PX = 7;
-const POSITIONS = [
-  [],
-  [[1 / 2, 1 / 2]],
-  [
-    [1 / 4, 1 / 4],
-    [3 / 4, 3 / 4],
-  ],
-  [
-    [1 / 2, 1 / 2],
-    [1 / 4, 1 / 4],
-    [3 / 4, 3 / 4],
-  ],
-  [
-    [1 / 4, 1 / 4],
-    [1 / 4, 3 / 4],
-    [3 / 4, 3 / 4],
-    [3 / 4, 1 / 4],
-  ],
-];
+const ATOM_RADIUS_PX = 6;
 
 class Draw {
   private _context: CanvasRenderingContext2D;
@@ -107,22 +88,38 @@ class Draw {
   private _cells() {
     for (let x = 0; x < GameSettings.DEFAULT_BOARD_SIZE; x++) {
       for (let y = 0; y < GameSettings.DEFAULT_BOARD_SIZE; y++) {
-        this._cell(x, y);
+        this._cell(x, y, Board[x][y]);
       }
     }
   }
 
-  private _cell(x: number, y: number) {
-    let cell = Globals.board.getCell(x, y);
-    let positions = POSITIONS[cell.atoms];
+  private _cell(x: number, y: number, count: number) {
+    x *= CELL_SIZE_PX;
+    y *= CELL_SIZE_PX;
 
-    for (let index = 0; index < positions.length; index++) {
-      const position = positions[index];
-      let posX = position[0];
-      let posY = position[1];
-      let atomX = (x + posX) * CELL_SIZE_PX;
-      let atomY = (y + posY) * CELL_SIZE_PX;
-      this._atom(atomX, atomY);
+    switch (count) {
+      case 0:
+        return;
+      case 1:
+        this._atom(x + CELL_SIZE_PX / 2, y + CELL_SIZE_PX / 2);
+        break;
+      case 2:
+        this._atom(x + CELL_SIZE_PX / 4, y + CELL_SIZE_PX / 4);
+        this._atom(x + CELL_SIZE_PX * (3 / 4), y + CELL_SIZE_PX * (3 / 4));
+        break;
+      case 3:
+        this._atom(x + CELL_SIZE_PX / 2, y + CELL_SIZE_PX / 2);
+        this._atom(x + CELL_SIZE_PX / 4, y + CELL_SIZE_PX / 4);
+        this._atom(x + CELL_SIZE_PX * (3 / 4), y + CELL_SIZE_PX * (3 / 4));
+        break;
+      case 4:
+        this._atom(x + CELL_SIZE_PX / 4, y + CELL_SIZE_PX / 4);
+        this._atom(x + CELL_SIZE_PX * (3 / 4), y + CELL_SIZE_PX / 4);
+        this._atom(x + CELL_SIZE_PX / 4, y + CELL_SIZE_PX * (3 / 4));
+        this._atom(x + CELL_SIZE_PX * (3 / 4), y + CELL_SIZE_PX * (3 / 4));
+
+      default:
+        throw new Error(`Unsupported number of atoms: ${count}`);
     }
   }
 

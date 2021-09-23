@@ -1,3 +1,4 @@
+import { Board } from "./board.js";
 import { Globals } from "./globals.js";
 import { Log } from "./log.js";
 
@@ -17,7 +18,7 @@ class Player {
     }
     var x = position[0];
     var y = position[1];
-    Globals.board.addAtom(x, y);
+    Board[x][y]++;
     Log.debug(`Player::click: Board[${x}][${y}]`);
     Globals.draw.all();
   }
